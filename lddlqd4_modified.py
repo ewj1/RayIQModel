@@ -62,6 +62,7 @@ yaw = 90+math.degrees(math.atan2(delta_z, delta_x))  # rotation in the xz plane 
 pitch = -math.degrees(math.atan2(delta_y, math.sqrt(delta_x**2 + delta_z**2)))
 roll = 0  # Circle symmetry
 
+print(f"Table center coordinates (XYZ): {table_center}")
 print(f"LED Center Coordinates (XYZ): {led_center}")
 print(f"LED Rotation Angles - Roll: {roll:.2f}, Pitch: {pitch:.2f}, Yaw: {yaw:.2f}")
 
@@ -69,7 +70,7 @@ print(f"LED Rotation Angles - Roll: {roll:.2f}, Pitch: {pitch:.2f}, Yaw: {yaw:.2
 led_emitter = Cylinder(
     led_radius, 
     led_thickness, 
-    transform=translate(ledx, ledy, ledz) * rotate(roll, pitch, yaw), 
+    transform=translate(ledx, ledy, ledz) * rotate(yaw, pitch, roll), 
     parent=world, 
     material=led_material
 )
@@ -135,7 +136,7 @@ def build_sensor(world, table_center, scale_factor):
         Point3D(wall_length / 2, diode_thickness + wall_height                   ,+ t_top_overhang + wall_thickness / 2),
         parent=world,
         material=metallic_wall_material,
-        transform=translate(lqd_position, table_center.y, table_center.z) * rotate(rotate_sensor, 0, 0)  # Rotate 90 degrees around Y-axis
+        transform=translate(lqd_position, table_center.y, table_center.z) * rotate_y(rotate_sensor)  # Rotate 90 degrees around Y-axis
     )
 
 
@@ -180,18 +181,7 @@ rgb2 = RGBPipeline2D(display_auto_exposure=True)
 rgb3 = RGBPipeline2D(display_auto_exposure=True)
 rgb_pipelines = [rgb1, rgb2, rgb3]
 
-# Print the XYZ coordinates of the table center and LED center
-print(f"Table center coordinates (XYZ): {table_center}")
-print(f"LED center coordinates (XYZ): {led_center}")
 
-x_angle = math.degrees(math.atan2(delta_y, math.sqrt(delta_x**2 + delta_z**2)))
-y_angle = math.degrees(math.atan2(delta_z, delta_x))
-roll_angle = math.degrees(math.atan2(delta_z, delta_y))
-
-print(f"Bearing from table to LED:")
-print(f"  X angle: {x_angle:.2f} degrees")
-print(f"  Y angle: {y_angle:.2f} degrees")
-print(f"Roll angle: {roll_angle:.2f} degrees")
 
 magnitude = math.sqrt(delta_x**2 + delta_y**2 + delta_z**2)
 unit_vector = (delta_x / magnitude, delta_y / magnitude, delta_z / magnitude)
@@ -264,7 +254,7 @@ camera3 = PinholeCamera(
     pipelines=[rgb3],  # RGB pipeline
     parent=world,
     transform=translate(camera_position3.x, camera_position3.y, camera_position3.z) *
-              rotate(pitch, yaw, roll)  # Transform: Translation + Rotation
+              rotate(yaw, pitch, roll)  # Transform: Translation + Rotation
 )
 
 # Debug print to verify camera setup
