@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 from raysect.primitive import Box, Cylinder
-from raysect.optical import World, Point3D, Vector3D, translate, rotate, rotate_x, rotate_z, Material
+from raysect.optical import World, Point3D, Vector3D, translate, rotate, rotate_x, rotate_y, rotate_z, Material
 from raysect.optical.material import Lambert, UniformSurfaceEmitter, AbsorbingSurface
 from raysect.optical.observer import PinholeCamera, Pixel
 from raysect.optical.observer.pipeline import RGBPipeline2D, PowerPipeline0D
@@ -17,7 +17,7 @@ ceiling_material = Lambert(ConstantSF(0.85))
 wall_material = Lambert(ConstantSF(0.9))
 floor_material = Lambert(ConstantSF(0.7))
 table_material = Lambert(ConstantSF(0.1))# make table light colored
-metallic_wall_material = Lambert(ConstantSF(0.5)) # edit for visual validatation - I can't see the walls (was 0.85)
+metallic_wall_material = Lambert(ConstantSF(0.5)) # edit for visual validatation
 #photodiode_material = Lambert(ConstantSF(1.0))    # allows visual inspection of shadows (looks white)
 photodiode_material = AbsorbingSurface()                    #  measures power (looks black)
 
@@ -118,7 +118,7 @@ def build_sensor(world, table_center, scale_factor):
         Point3D(wall_length / 2, diode_thickness + wall_height, wall_thickness / 2),
         parent=world,
         material=metallic_wall_material,
-        transform=translate(ldd_position, table_center.y, table_center.z) * rotate(rotate_sensor, 0, 0)  # Rotate 90 degrees around Y-axis
+        transform=translate(ldd_position, table_center.y, table_center.z) * rotate_y(rotate_sensor)  # Rotate 90 degrees around Y-axis
     )
 
     # LQD Wall with T-top
@@ -127,7 +127,7 @@ def build_sensor(world, table_center, scale_factor):
         Point3D(wall_length / 2, diode_thickness + wall_height, wall_thickness / 2),
         parent=world,
         material=metallic_wall_material,
-        transform=translate(lqd_position, table_center.y, table_center.z) * rotate(rotate_sensor, 0, 0)  # Rotate 90 degrees around Y-axis
+        transform=translate(lqd_position, table_center.y, table_center.z) * rotate_y(rotate_sensor)  # Rotate 90 degrees around Y-axis
     )
 
     lqd_wall_top = Box(
